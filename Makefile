@@ -24,11 +24,13 @@ ifeq ($(REV), sysv)
   BASEDIR         ?= $(HOME)/public_html/lfs-book
   PDF_OUTPUT      ?= LFS-BOOK.pdf
   NOCHUNKS_OUTPUT ?= LFS-BOOK.html
+  MD_OUTPUT       ?= LFS-BOOK.md
   DUMPDIR         ?= $(HOME)/lfs-commands
 else
   BASEDIR         ?= $(HOME)/public_html/lfs-systemd
   PDF_OUTPUT      ?= LFS-SYSD-BOOK.pdf
   NOCHUNKS_OUTPUT ?= LFS-SYSD-BOOK.html
+  MD_OUTPUT       ?= LFS-SYSD-BOOK.md
   DUMPDIR         ?= $(HOME)/lfs-sysd-commands
 endif
 
@@ -107,6 +109,15 @@ nochunks: validate profile-html
            -i $(BASEDIR)/$(NOCHUNKS_OUTPUT)
 
 	@echo "Output at $(BASEDIR)/$(NOCHUNKS_OUTPUT)"
+
+markdown: validate
+	@echo "Generating Markdown file at $(BASEDIR)/$(MD_OUTPUT)..."
+	$(Q)mkdir -p $(BASEDIR)$(Q)xsltproc --nonet \
+	              --stringparam rootid "$(ROOT_ID)" \
+	              --output $(BASEDIR)/$(MD_OUTPUT) \
+	              stylesheets/lfs-xsl/markdown.xsl \
+	              $(RENDERTMP)/lfs-full.xml
+	@echo "Markdown book created at $(BASEDIR)/$(MD_OUTPUT)"
 
 tmpdir:
 	@echo "Creating and cleaning $(RENDERTMP)"
